@@ -17,6 +17,12 @@ const Navbar = () => {
       <Link href="/ninjas">
         <a>Ninja Listing</a>
       </Link>
+      <Link href="/stepper">
+        <a>Mui Stepper</a>
+      </Link>
+      <Link href="/slick">
+        <a>Slick</a>
+      </Link>
     </nav>
   );
 };
