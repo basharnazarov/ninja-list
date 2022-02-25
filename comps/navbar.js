@@ -17,6 +17,18 @@ const Navbar = () => {
       <Link href="/ninjas">
         <a>Ninja Listing</a>
       </Link>
+      <Link href="/stepper">
+        <a>Mui Stepper</a>
+      </Link>
+      <Link href="/slick">
+        <a>Slick</a>
+      </Link>
+      <Link href="/carousel">
+        <a>Carousel</a>
+      </Link>
+      <Link href="/form">
+        <a>Form</a>
+      </Link>
     </nav>
   );
 };
