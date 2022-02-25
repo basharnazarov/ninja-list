@@ -23,6 +23,12 @@ const Navbar = () => {
       <Link href="/slick">
         <a>Slick</a>
       </Link>
+      <Link href="/carousel">
+        <a>Carousel</a>
+      </Link>
+      <Link href="/form">
+        <a>Form</a>
+      </Link>
     </nav>
   );
 };

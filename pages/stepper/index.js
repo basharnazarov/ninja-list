@@ -1,118 +1,124 @@
 import * as React from 'react';
-import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import MobileStepper from '@mui/material/MobileStepper';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
+import Stepper from '@mui/material/Stepper';
+import Step from '@mui/material/Step';
+import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
-import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
-import SwipeableViews from 'react-swipeable-views';
-import { maxWidth } from '@mui/system';
+import Typography from '@mui/material/Typography';
 
-const images = [
-  {
-    label: 'San Francisco – Oakland Bay Bridge, United States',
-    imgPath:
-      'https://images.unsplash.com/photo-1537944434965-cf4679d1a598?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    label: 'Bird',
-    imgPath:
-      'https://images.unsplash.com/photo-1538032746644-0212e812a9e7?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-  {
-    label: 'Bali, Indonesia',
-    imgPath:
-      'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=400&h=250&q=80',
-  },
-  {
-    label: 'Goč, Serbia',
-    imgPath:
-      'https://images.unsplash.com/photo-1512341689857-198e7e2f3ca8?auto=format&fit=crop&w=400&h=250&q=60',
-  },
-];
+const steps = ['Main information', 'Addresses', 'Contacts'];
 
-function SwipeableTextMobileStepper() {
-  const theme = useTheme();
+
+
+
+export default function HorizontalLinearStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
-  const maxSteps = images.length;
+  const [skipped, setSkipped] = React.useState(new Set());
+ 
+  
+  const isStepOptional = (step) => {
+    return step === 1;
+  };
+
+  const isStepSkipped = (step) => {
+    return skipped.has(step);
+  };
 
   const handleNext = () => {
+    let newSkipped = skipped;
+    if (isStepSkipped(activeStep)) {
+      newSkipped = new Set(newSkipped.values());
+      newSkipped.delete(activeStep);
+    }
+
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setSkipped(newSkipped);
   };
 
   const handleBack = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleStepChange = (step) => {
-    setActiveStep(step);
+  const handleSkip = () => {
+    if (!isStepOptional(activeStep)) {
+      // You probably want to guard against something like this,
+      // it should never occur unless someone's actively trying to break something.
+      throw new Error("You can't skip a step that isn't optional.");
+    }
+
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+    setSkipped((prevSkipped) => {
+      const newSkipped = new Set(prevSkipped.values());
+      newSkipped.add(activeStep);
+      return newSkipped;
+    });
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
   };
 
   return (
-    <Box sx={{ maxWidth: 400, flexGrow: 1 }}>
-      {/* <MobileStepper
-        steps={maxSteps}
-        position="static"
-        activeStep={activeStep}
-      /> */}
-      <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={activeStep}
-        onChangeIndex={handleStepChange}
-        enableMouseEvents
-      >
-        {images.map((step, index) => (
-          <div key={step.label}>
-            <Box
-              component="img"
-              sx={{
-                height: 255,
-                display: 'block',
-                maxWidth: 400,
-                overflow: 'hidden',
-                width: '100%',
-              }}
-              src={step.imgPath}
-              alt={step.label}
-            />
-          </div>
-        ))}
-      </SwipeableViews>
-
-      <Box
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          padding: '0',
-          justifyContent: 'space-around',
-        }}
-      >
-        <KeyboardArrowLeft onClick={handleBack} />
-        <ul style={{ display: 'flex', padding: '0px' }}>
-          {images.map((image) => {
-            return (
-              <Box
-                component="img"
-                src={image.imgPath}
-                key={image.label}
-                sx={{
-                  maxWidth: 70,
-                  '&:hover': { opacity: '0.6' },
-                }}
-              />
+    <>
+    <Box sx={{ width: '70%' }}>
+      <Stepper activeStep={activeStep}>
+        {steps.map((label, index) => {
+          const stepProps = {};
+          const labelProps = {};
+          if (isStepOptional(index)) {
+            labelProps.optional = (
+              <Typography variant="caption">Optional</Typography>
             );
-          })}
-        </ul>
-
-        <KeyboardArrowRight
-          onClick={handleNext}
-          disabled={activeStep === maxSteps - 1}
-        />
-      </Box>
+          }
+          if (isStepSkipped(index)) {
+            stepProps.completed = false;
+          }
+          return (
+            <Step key={label} {...stepProps}>
+              <StepLabel {...labelProps}>{label}</StepLabel>
+            </Step>
+          );
+        })}
+      </Stepper>
+     
     </Box>
+    {activeStep === steps.length ? (
+        <React.Fragment>
+          <Typography sx={{ mt: 2, mb: 1 }}>
+            All steps completed - you&apos;re finished
+          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+            <Box sx={{ flex: '1 1 auto' }} />
+            <Button onClick={handleReset}>Reset</Button>
+          </Box>
+        </React.Fragment>
+      ) : (
+        <React.Fragment >
+          <Typography sx={{ mt: 2, mb: 1 }}>{steps[activeStep]}</Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', pt: 2 }}>
+            
+            <Box sx={{ flex: '1 1 auto' }} />
+            {isStepOptional(activeStep) && (
+              <Button color="inherit" onClick={handleSkip} sx={{ mr: 1 }}>
+                Skip
+              </Button>
+            )}
+
+            <Button onClick={handleNext}>
+              {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+            </Button>
+            <Button
+              color="inherit"
+            
+              onClick={handleBack}
+              sx={{ mr: 1 }}
+            >
+              Back
+            </Button>
+          </Box>
+        </React.Fragment>
+      )}
+    </>
+    
   );
 }
-
-export default SwipeableTextMobileStepper;

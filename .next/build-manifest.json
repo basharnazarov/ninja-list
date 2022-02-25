@@ -25,15 +25,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/slick": [
+    "/form": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/slick.js"
-    ],
-    "/stepper": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/stepper.js"
+      "static/chunks/pages/form.js"
     ]
   },
   "ampFirstPages": []

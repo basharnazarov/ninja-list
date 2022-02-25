@@ -67,7 +67,7 @@ export default class AsNavFor extends Component {
         <Slider
           asNavFor={this.state.nav1}
           ref={(slider) => (this.slider2 = slider)}
-          slidesToShow={images.length}
+          slidesToShow={2}
           swipeToSlide={true}
           focusOnSelect={true}
         >
